@@ -2,206 +2,81 @@
 base_model: Qwen/Qwen3-1.7B
 library_name: peft
 pipeline_tag: text-generation
+license: mit
 tags:
 - base_model:adapter:Qwen/Qwen3-1.7B
 - lora
 - transformers
 ---
 
-# Model Card for Model ID
+# Preprint Critic — LoRA adapter
 
-<!-- Provide a quick summary of what the model is/does. -->
+LoRA fine-tune of [Qwen/Qwen3-1.7B](https://huggingface.co/Qwen/Qwen3-1.7B) to write conference peer reviews from a paper's text. Trained on [Daoze/ReviewRebuttal](https://huggingface.co/datasets/Daoze/ReviewRebuttal) — 500 ICLR papers with their human reviews.
 
+Full training details, results, and methodology are in the [repository README](https://github.com/HAT-ZAID/Preprint-Critic).
 
+## Quick start
 
-## Model Details
+```python
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from peft import PeftModel
 
-### Model Description
+base = AutoModelForCausalLM.from_pretrained("Qwen/Qwen3-1.7B")
+tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen3-1.7B")
+model = PeftModel.from_pretrained(base, "rc_project_adapter_v1")
 
-<!-- Provide a longer summary of what this model is. -->
+messages = [{"role": "user", "content": "write a constructive peer review for this paper.\n\n" + PAPER_TEXT}]
+prompt = tokenizer.apply_chat_template(
+    messages, tokenize=False, add_generation_prompt=True, enable_thinking=False
+)
+inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+print(tokenizer.decode(model.generate(**inputs, max_new_tokens=512)[0][inputs.input_ids.shape[1]:]))
+```
 
+Requires a GPU; the base model was loaded in 4-bit during training.
 
+## Model details
 
-- **Developed by:** [More Information Needed]
-- **Funded by [optional]:** [More Information Needed]
-- **Shared by [optional]:** [More Information Needed]
-- **Model type:** [More Information Needed]
-- **Language(s) (NLP):** [More Information Needed]
-- **License:** [More Information Needed]
-- **Finetuned from model [optional]:** [More Information Needed]
+| | |
+|---|---|
+| Base model | Qwen/Qwen3-1.7B |
+| Method | LoRA (`r=8`, `alpha=16`, `dropout=0.05`) |
+| Target modules | `q_proj`, `k_proj`, `v_proj`, `o_proj`, `gate_proj`, `up_proj`, `down_proj` |
+| Task type | `CAUSAL_LM` |
+| Adapter size | 34 MB |
+| Max sequence length | 6144 |
+| PEFT version | 0.21.2 |
 
-### Model Sources [optional]
+## Training data
 
-<!-- Provide the basic links for the model. -->
+`Daoze/ReviewRebuttal` — 500 ICLR papers joined to their reviews. Paper text came from the dataset's separate `papers.zip` LaTeX archive (373,425 files, all 500 IDs matched); references and appendices were regex-stripped before prompting, cutting input length 25.5%.
 
-- **Repository:** [More Information Needed]
-- **Paper [optional]:** [More Information Needed]
-- **Demo [optional]:** [More Information Needed]
+## Results
 
-## Uses
+Loss only — no published baseline exists for paper-text → review on this dataset.
 
-<!-- Address questions around how the model is intended to be used, including the foreseeable users of the model and those affected by the model. -->
+| Split | Loss |
+|---|---|
+| Train | 2.670 |
+| Validation | 2.535 |
+| Test | 2.607 |
 
-### Direct Use
+Splits are keyed on `paper_id`, so no paper appears in both train and test (verified: 0 of 50 test papers overlap). Trained 1 epoch on a T4, 1,372s.
 
-<!-- This section is for the model use without fine-tuning or plugging into a larger ecosystem/app. -->
+## Limitations
 
-[More Information Needed]
+- Single seed, single run, no hyperparameter search — the config is what fit a T4, not a tuned optimum.
+- Training capped at 1,200 rows of the 1,584 available.
+- No ROUGE or similar metric; quality assessment here is qualitative.
+- `adapter_config.json` ships with `inference_mode: true`; set it to `False` before further training.
 
-### Downstream Use [optional]
+## Citation
 
-<!-- This section is for the model use when fine-tuned for a task, or when plugged into a larger ecosystem/app -->
+No paper. Cite the base model, the dataset, and this repository.
 
-[More Information Needed]
+- Qwen3-1.7B — https://huggingface.co/Qwen/Qwen3-1.7B
+- ReviewRebuttal — https://huggingface.co/datasets/Daoze/ReviewRebuttal
 
-### Out-of-Scope Use
+## Authors
 
-<!-- This section addresses misuse, malicious use, and uses that the model will not work well for. -->
-
-[More Information Needed]
-
-## Bias, Risks, and Limitations
-
-<!-- This section is meant to convey both technical and sociotechnical limitations. -->
-
-[More Information Needed]
-
-### Recommendations
-
-<!-- This section is meant to convey recommendations with respect to the bias, risk, and technical limitations. -->
-
-Users (both direct and downstream) should be made aware of the risks, biases and limitations of the model. More information needed for further recommendations.
-
-## How to Get Started with the Model
-
-Use the code below to get started with the model.
-
-[More Information Needed]
-
-## Training Details
-
-### Training Data
-
-<!-- This should link to a Dataset Card, perhaps with a short stub of information on what the training data is all about as well as documentation related to data pre-processing or additional filtering. -->
-
-[More Information Needed]
-
-### Training Procedure
-
-<!-- This relates heavily to the Technical Specifications. Content here should link to that section when it is relevant to the training procedure. -->
-
-#### Preprocessing [optional]
-
-[More Information Needed]
-
-
-#### Training Hyperparameters
-
-- **Training regime:** [More Information Needed] <!--fp32, fp16 mixed precision, bf16 mixed precision, bf16 non-mixed precision, fp16 non-mixed precision, fp8 mixed precision -->
-
-#### Speeds, Sizes, Times [optional]
-
-<!-- This section provides information about throughput, start/end time, checkpoint size if relevant, etc. -->
-
-[More Information Needed]
-
-## Evaluation
-
-<!-- This section describes the evaluation protocols and provides the results. -->
-
-### Testing Data, Factors & Metrics
-
-#### Testing Data
-
-<!-- This should link to a Dataset Card if possible. -->
-
-[More Information Needed]
-
-#### Factors
-
-<!-- These are the things the evaluation is disaggregating by, e.g., subpopulations or domains. -->
-
-[More Information Needed]
-
-#### Metrics
-
-<!-- These are the evaluation metrics being used, ideally with a description of why. -->
-
-[More Information Needed]
-
-### Results
-
-[More Information Needed]
-
-#### Summary
-
-
-
-## Model Examination [optional]
-
-<!-- Relevant interpretability work for the model goes here -->
-
-[More Information Needed]
-
-## Environmental Impact
-
-<!-- Total emissions (in grams of CO2eq) and additional considerations, such as electricity usage, go here. Edit the suggested text below accordingly -->
-
-Carbon emissions can be estimated using the [Machine Learning Impact calculator](https://mlco2.github.io/impact#compute) presented in [Lacoste et al. (2019)](https://arxiv.org/abs/1910.09700).
-
-- **Hardware Type:** [More Information Needed]
-- **Hours used:** [More Information Needed]
-- **Cloud Provider:** [More Information Needed]
-- **Compute Region:** [More Information Needed]
-- **Carbon Emitted:** [More Information Needed]
-
-## Technical Specifications [optional]
-
-### Model Architecture and Objective
-
-[More Information Needed]
-
-### Compute Infrastructure
-
-[More Information Needed]
-
-#### Hardware
-
-[More Information Needed]
-
-#### Software
-
-[More Information Needed]
-
-## Citation [optional]
-
-<!-- If there is a paper or blog post introducing the model, the APA and Bibtex information for that should go in this section. -->
-
-**BibTeX:**
-
-[More Information Needed]
-
-**APA:**
-
-[More Information Needed]
-
-## Glossary [optional]
-
-<!-- If relevant, include terms and calculations in this section that can help readers understand the model or model card. -->
-
-[More Information Needed]
-
-## More Information [optional]
-
-[More Information Needed]
-
-## Model Card Authors [optional]
-
-[More Information Needed]
-
-## Model Card Contact
-
-[More Information Needed]
-### Framework versions
-
-- PEFT 0.21.2
+Z Hat — https://github.com/HAT-ZAID

@@ -1,0 +1,8 @@
+# Pinned to what the notebook actually ran with (Colab, Python 3.13.15)
+transformers==5.19.0
+peft==0.21.2
+accelerate==1.15.0
+datasets==5.1.0
+torch==2.11.0
+bitsandbytes>=0.46.0
+huggingface_hub
