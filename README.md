@@ -55,6 +55,7 @@ window. Length percentiles are printed per split and `truncated = 0/2500` with p
 | | |
 |---|---|
 | Train loss (final logged, step 70) | **2.2351** |
+| Train loss (step 1, ≈ base model) | 2.8531 |
 | Validation loss | 2.2496 |
 | Test loss | 2.2227 |
 | Trainable params | 16,515,072 (0.4089%) |
@@ -71,7 +72,16 @@ Gradient norms stay in 0.14–0.22 and the learning rate decays linearly 2e-4 �
 loss sits between validation and test, so there's no overfitting gap — expected from 1 epoch over
 2,500 rows at rank 8.
 
-Two notes on where these numbers come from:
+**About the step-1 number, since it's the closest thing to a baseline here.** LoRA initialises
+`lora_B` to zeros, so the adapter contributes nothing until the first update and the adapted model
+starts out functionally identical to the base model. HF logs step 1 before that update, so **2.8531
+is a genuine measurement of the base model's teacher-forced loss** — a drop of 0.618 nats. Two
+limits worth stating: it averages the 12 micro-batches of the first optimizer step, so it covers
+~36 *training* rows rather than the held-out split, and the validation/test losses above are on
+different data. A matched base-model validation loss was never computed, so this is not a
+like-for-like before/after. It's the closest available baseline, not a clean one.
+
+Two more notes on where these numbers come from:
 
 - The Colab session collapsed mid-run and training resumed from `checkpoint-70`, which was already
   at the final step. The notebook's `train()` therefore did zero work and printed
@@ -139,14 +149,20 @@ switch.
 
 ## Limitations and next steps
 
+- **Add a matched baseline.** LoRA is a no-op at initialization, so step 1 (2.8531) already
+  approximates the base model's loss — but only on ~36 training rows. A base-model validation loss
+  on the same 250 held-out rows is forward passes only, roughly 4 minutes at the speed this run
+  already achieved. That is the single highest-value thing missing from this repo.
 - **Give the model the whole paper.** Papers were capped at 6,500 tokens while Re² papers run
   6,000–16,000, so the tail — experiments, ablations, limitations — is exactly what the checklist
   asks about and exactly what the model can't see. Raising the budget is the first thing I'd
   change.
 - **Add real metrics.** Currently 10 hand-read samples. Re² publishes EmbedCos and BERTScore for
   review generation on this data, so a comparable number is available rather than invented.
-- **Score the base model too.** Base-model validation loss was never computed, so there's no
-  before/after delta yet.
+- **Score the base model too.** Step 1 approximates base loss on a small training batch, but no
+  base-model validation loss was computed, so there's no matched before/after delta yet.
+- **Re-run generation with a real token budget.** `max_new_tokens=1500` left all 10 base outputs
+  ending mid-sentence; 8192 would make the comparison fair.
 - **Use the held-out split upstream.** Re² ships `REVIEWS_test.json` (1,000 papers) that this run
   didn't touch; it also needs deduping against Re², which has no decontamination of its own.
 - **Use more of the data, and validate while training.** 2,500 of ~5,600 available rows, one epoch,
@@ -187,8 +203,8 @@ often than the base model's reasoning did — while citing nothing. The likely c
 -token paper budget rather than the fine-tune itself.
 
 Not yet computed, and the obvious next step: ROUGE-L and EmbedCos against Re²'s published
-numbers (17.92 / 0.730 for LoRA-tuned LLaMA-3.1-8B on this dataset), and a base-model
-validation loss for the before/after delta. Both need no retraining, only the metric libraries.
+numbers (17.92 / 0.730 for LoRA-tuned LLaMA-3.1-8B on this dataset). Both need no retraining,
+only the metric libraries.
 
 ## Credits
 
