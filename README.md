@@ -156,8 +156,9 @@ switch.
   already achieved. That is the single highest-value thing missing from this repo.
 - **Give the model the whole paper.** Papers were capped at 6,500 tokens while Re² papers run
   6,000–16,000, so the tail — experiments, ablations, limitations — is exactly what the checklist
-  asks about and exactly what the model can't see. Raising the budget is the first thing I'd
-  change.
+  asks about and exactly what the model can't see. This is the change I'd make first, but note it's
+  three coupled edits, not one: `MAX_LENGTH` has to rise above 8,192 or the longer paper just gets
+  truncated later, and memory grows with sequence length, so the memory fix below is a prerequisite.
 - **Add real metrics.** Currently 10 hand-read samples. Re² publishes EmbedCos and BERTScore for
   review generation on this data, so a comparable number is available rather than invented.
 - **Score the base model too.** Step 1 approximates base loss on a small training batch, but no
@@ -169,9 +170,10 @@ switch.
 - **Use more of the data, and validate while training.** 2,500 of ~5,600 available rows, one epoch,
   one seed, and `eval_steps` above `max_steps` meant no validation ran during training.
 - **Free the GPU.** My best estimate is that the bulk of the memory went to the fp32 logits tensor
-  at `vocab_size 151,936` rather than the 4-bit weights — that's the usual suspect at 8k context,
-  and `liger-kernel`'s fused linear cross-entropy is the documented fix. This run recorded no
-  `torch.cuda.max_memory_allocated()` call, so it is an inference, not a measurement.
+  at `vocab_size 151,936` rather than the 4-bit weights — the usual suspect at 8k context, and
+  `liger-kernel`'s fused linear cross-entropy is the documented fix. This run recorded no
+  `torch.cuda.max_memory_allocated()` call, so treat it as a hypothesis to confirm, not a
+  measurement. It also has to come first, since memory grows with sequence length.
 - **Make it runnable off Colab.** Drive paths are hardcoded in nine cells and the resume path
   points at a checkpoint a fresh clone won't have.
 - **Then:** fill in the model card, publish the adapter to the Hub, and add tests around the
@@ -208,8 +210,12 @@ for both the base model and the human reviewers.
 What they do establish: the adapter reliably learned the review **form** — every fine-tuned output
 opens with the dataset's `summary_of_the_paper:` heading, against 0/10 for the base model and 1/10
 for human reviewers. What it did *not* learn is the review's **substance**: it cites nothing, and
-it repeats phrases far more than either the base model or a human reviewer. The likely cause is
-the 6,500-token paper budget, but that is a hypothesis this repo cannot test — see Limitations.
+it repeats phrases far more than either the base model or a human reviewer.
+
+The obvious suspect is the 6,500-token paper budget — the model was asked to critique experiments
+it could not see. That's a hypothesis, not something this repo measures; the same pattern is also
+consistent with template-memorisation from the training targets. Testing it means re-running the
+same held-out papers at a larger budget with everything else fixed.
 
 Note these are n=10 regex proxies, not judgments, and they are directional only.
 
