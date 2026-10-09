@@ -159,6 +159,37 @@ switch.
 - **Then:** fill in the model card, publish the adapter to the Hub, and add tests around the
   prompt-boundary assertion and the reference-stripping regex.
 
+## Evaluation methodology
+
+`comparison.json` holds 10 held-out papers with three texts each: base-model generation,
+fine-tuned generation, and the human review. Everything below is computed from that file with
+deterministic string analysis — no GPU, no scoring model, nothing to install.
+
+| measured | how | base | fine-tuned | human ref |
+|---|---|---:|---:|---:|
+| cites a Section/Table/Figure | regex over the text | 9/10 | **0/10** | 7/10 |
+| contains a numeric result | decimal or percentage | 7/10 | 0/10 | 5/10 |
+| 10-gram repeated ≥3× | max n-gram count − 1 | 1/10 | **10/10** | 0/10 |
+| states a verdict (accept/reject) | keyword match | 1/10 | 0/10 | 3/10 |
+| ends on a sentence boundary | last character check | **0/10** | 9/10 | 9/10 |
+| uses a schema label | fixed label list | 4/10 | 10/10 | 6/10 |
+
+**Read the last-but-one row before drawing any conclusion from the others.** All 10 base
+generations stop mid-sentence and 3 of them are raw reasoning rather than reviews, because
+`max_new_tokens=1500` was shared with a thinking-only model. So the base arm is not a valid
+control: any base-vs-fine difference here measures the generation budget at least as much as it
+measures the fine-tune. These numbers are directional, n=10, and the regexes are proxies rather
+than judgments.
+
+What they do establish: the adapter reliably learned the review *form* (10/10 schema labels,
+including the dataset's own comma-and-underscore key), and it stopped repeating itself less
+often than the base model's reasoning did — while citing nothing. The likely cause is the 6,500
+-token paper budget rather than the fine-tune itself.
+
+Not yet computed, and the obvious next step: ROUGE-L and EmbedCos against Re²'s published
+numbers (17.92 / 0.730 for LoRA-tuned LLaMA-3.1-8B on this dataset), and a base-model
+validation loss for the before/after delta. Both need no retraining, only the metric libraries.
+
 ## Credits
 
 - Data: [Daoze/ReviewRebuttal](https://huggingface.co/datasets/Daoze/ReviewRebuttal) — Re², Apache-2.0, [arXiv:2505.07920](https://arxiv.org/abs/2505.07920). Paper text is converted from initial-submission PDFs by the dataset authors using commercial OCR.
