@@ -106,7 +106,7 @@ rc_project_adapter_V2/
   rc_project_adapter/                 trained LoRA adapter (66 MB, fp32)
     adapter_model.safetensors         the weights (504 tensors, 16,515,072 params)
     adapter_config.json               LoRA hyperparams + base model
-    tokenizer.json                    11 MB (byte-equivalent to the base model's)
+    tokenizer.json                    11 MB (same vocab as the base model's, not the same bytes)
     chat_template.jinja               Qwen3 template
     README.md                         model card
 comparison.json                       10 held-out papers: base vs fine-tuned vs human
@@ -115,9 +115,10 @@ baseline_results.json                 base generations only
 requirements.txt                      pinned stack
 ```
 
-The tokenizer is committed for convenience but is byte-equivalent to
-`AutoTokenizer.from_pretrained("Qwen/Qwen3-4B-Thinking-2507")`. Adapter weights are fp32 and would
-halve in bf16.
+The tokenizer is committed for convenience. It carries the same vocabulary as the base model's but
+is not byte-identical to it — four bytes differ, in `trim_offsets` / `use_regex` /
+`add_prefix_space` decoder settings — so load from the base model if you want the exact upstream
+config. Adapter weights are fp32 and would halve in bf16.
 
 ## Run it
 
@@ -167,10 +168,11 @@ switch.
   didn't touch; it also needs deduping against Re², which has no decontamination of its own.
 - **Use more of the data, and validate while training.** 2,500 of ~5,600 available rows, one epoch,
   one seed, and `eval_steps` above `max_steps` meant no validation ran during training.
-- **Free the GPU.** ~65 of 79.3 GB goes to the fp32 logits tensor at `vocab_size 151,936` rather
-  than the weights; a fused linear cross-entropy would recover most of it and allow a larger
-  micro-batch.
-- **Make it runnable off Colab.** Drive paths are hardcoded in seven cells and the resume path
+- **Free the GPU.** My best estimate is that the bulk of the memory went to the fp32 logits tensor
+  at `vocab_size 151,936` rather than the 4-bit weights — that's the usual suspect at 8k context,
+  and `liger-kernel`'s fused linear cross-entropy is the documented fix. This run recorded no
+  `torch.cuda.max_memory_allocated()` call, so it is an inference, not a measurement.
+- **Make it runnable off Colab.** Drive paths are hardcoded in nine cells and the resume path
   points at a checkpoint a fresh clone won't have.
 - **Then:** fill in the model card, publish the adapter to the Hub, and add tests around the
   prompt-boundary assertion and the reference-stripping regex.
@@ -183,24 +185,33 @@ deterministic string analysis — no GPU, no scoring model, nothing to install.
 
 | measured | how | base | fine-tuned | human ref |
 |---|---|---:|---:|---:|
-| cites a Section/Table/Figure | regex over the text | 9/10 | **0/10** | 7/10 |
+| opens with `summary_of_the_paper:` | literal heading | 0/10 | **10/10** | 1/10 |
+| uses the dataset's `clarity,_quality,…` key | literal heading | 0/10 | 4/10 | 1/10 |
+| cites a Section/Table/Figure | regex, needs a number | 9/10 | **0/10** | 7/10 |
 | contains a numeric result | decimal or percentage | 7/10 | 0/10 | 5/10 |
-| 10-gram repeated ≥3× | max n-gram count − 1 | 1/10 | **10/10** | 0/10 |
-| states a verdict (accept/reject) | keyword match | 1/10 | 0/10 | 3/10 |
-| ends on a sentence boundary | last character check | **0/10** | 9/10 | 9/10 |
-| uses a schema label | fixed label list | 4/10 | 10/10 | 6/10 |
+| carries a citation marker (`[n]`/URL/year) | regex | 1/10 | **3/10** | 1/10 |
+| 5-gram repeated ≥3× | non-overlapping chunks | 0/10 | **7/10** | 0/10 |
+| ends on a sentence boundary | last character | **0/10** | 9/10 | 9/10 |
 
-**Read the last-but-one row before drawing any conclusion from the others.** All 10 base
-generations stop mid-sentence and 3 of them are raw reasoning rather than reviews, because
-`max_new_tokens=1500` was shared with a thinking-only model. So the base arm is not a valid
-control: any base-vs-fine difference here measures the generation budget at least as much as it
-measures the fine-tune. These numbers are directional, n=10, and the regexes are proxies rather
-than judgments.
+**Read the last row first.** All 10 base generations stop mid-sentence and 3 are raw reasoning
+rather than reviews, because `max_new_tokens=1500` was shared with a thinking-only model. The base
+arm is therefore not a valid control — base-vs-fine differences in this table measure the
+generation budget at least as much as the fine-tune. The rows computed on complete fine-tuned
+output (schema adoption, repetition) are the cleaner ones.
 
-What they do establish: the adapter reliably learned the review *form* (10/10 schema labels,
-including the dataset's own comma-and-underscore key), and it stopped repeating itself less
-often than the base model's reasoning did — while citing nothing. The likely cause is the 6,500
--token paper budget rather than the fine-tune itself.
+An earlier version of this table reported "10-gram repeated ≥3×: fine 10/10". That was an artifact
+of counting overlapping n-gram windows: one repeated passage matched ~10 times and looked like ten
+repeats. With non-overlapping chunks, **no arm repeats a 10-gram three times** — the effect is
+real at 5-grams, where 7/10 fine-tuned outputs repeat a phrase three or more times against 0/10
+for both the base model and the human reviewers.
+
+What they do establish: the adapter reliably learned the review **form** — every fine-tuned output
+opens with the dataset's `summary_of_the_paper:` heading, against 0/10 for the base model and 1/10
+for human reviewers. What it did *not* learn is the review's **substance**: it cites nothing, and
+it repeats phrases far more than either the base model or a human reviewer. The likely cause is
+the 6,500-token paper budget, but that is a hypothesis this repo cannot test — see Limitations.
+
+Note these are n=10 regex proxies, not judgments, and they are directional only.
 
 Not yet computed, and the obvious next step: ROUGE-L and EmbedCos against Re²'s published
 numbers (17.92 / 0.730 for LoRA-tuned LLaMA-3.1-8B on this dataset). Both need no retraining,
