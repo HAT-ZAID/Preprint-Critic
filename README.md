@@ -144,20 +144,10 @@ length. Budget, window and batch are one decision.
 **What this run does not measure.** Generation quality — no generations are in the repo yet.
 
 ## Open work
-
-- **Paired generation eval, next up.** Cells 38–40 cover 100 held-out review rows with
-  per-paper deterministic seeds. Cell 38 needs the adapter detached (`disable_adapter()` or
-  `merge_and_unload()`) before it produces a real baseline.
-- **Metrics.** EmbedCos, chunked at ≤384 tokens since the default sentence encoder truncates
-  mid-review, plus a groundedness check — does every Section/Table/URL/number in an output appear
-  in the paper. Re² publishes ROUGE-L 17.92 / EmbedCos 0.730 for a LoRA-tuned LLaMA-3.1-8B here.
-- **Matched base-model validation loss** on the same 250 held-out rows. Forward passes only, and
+- **Metrics.** More testing is needed (e.g. baseline vs finetune results comparison etc.).
   the cheapest way to replace the step-1 approximation above.
-- **`REVIEWS_test.json` is unused.** 1,000 held-out papers exist upstream; adopting them needs
-  deduping, since Re² ships no decontamination of its own.
-- **Model card is still the HF template** — needs filling in before publishing the adapter.
-- **Notebook is Colab-bound.** Drive paths are hardcoded and the resume path points at a
-  checkpoint a fresh clone will not have.
+- **Model card work**
+- **Notebook is Colab-bound.**
 
 ## Credits
 
