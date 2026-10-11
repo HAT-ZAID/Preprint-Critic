@@ -3,7 +3,7 @@
   "alpha_pattern": {},
   "arrow_config": null,
   "auto_mapping": null,
-  "base_model_name_or_path": "Qwen/Qwen3-4B-Thinking-2507",
+  "base_model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
   "bias": "none",
   "corda_config": null,
   "ensure_weight_tying": false,
@@ -32,13 +32,13 @@
   "rank_pattern": {},
   "revision": null,
   "target_modules": [
-    "down_proj",
-    "k_proj",
-    "up_proj",
     "o_proj",
+    "down_proj",
+    "v_proj",
+    "up_proj",
     "gate_proj",
     "q_proj",
-    "v_proj"
+    "k_proj"
   ],
   "target_parameters": null,
   "task_type": "CAUSAL_LM",
