@@ -12,3 +12,9 @@ my_dataset/
 papers.zip
 /content/
 *.safetensors.tmp
+
+# One-off kernel/batch sweep — kept locally for reference, not part of the artifact
+Notebooks/A100 Results.txt
+
+# Extracted paper text (182 MB) — regenerable from papers.zip via notebook cells 10-14
+data/*.json

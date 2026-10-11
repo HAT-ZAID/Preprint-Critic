@@ -4,5 +4,13 @@ peft==0.21.2
 accelerate==1.15.0
 datasets==5.1.0
 torch==2.11.0
-bitsandbytes>=0.46.0
+bitsandbytes==0.50.2
 huggingface_hub
+
+# Imported in cell 22 before from_pretrained; without it the notebook raises ImportError
+liger-kernel==0.8.4
+
+# Used in notebook code, arrives transitively via the packages above
+numpy
+tqdm
+packaging
