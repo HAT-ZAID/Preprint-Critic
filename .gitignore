@@ -1,5 +1,6 @@
 __pycache__/
 *.pyc
+.pytest_cache/
 .ipynb_checkpoints/
 .venv/
 venv/
@@ -12,6 +13,17 @@ my_dataset/
 papers.zip
 /content/
 *.safetensors.tmp
+*.zip
+
+# Training checkpoints (optimizer states alone are 126 MB each)
+Checkpoint/
+
+# Preprocessed dataset artifacts (766 MB) — regenerate with the notebook
+rc_project_datasets_V3/
+
+# Extracted source text and source PDFs — regenerable, not part of the artifact
+comparison/extracted_paper_texts.json
+comparison/*.pdf
 
 # One-off kernel/batch sweep — kept locally for reference, not part of the artifact
 Notebooks/A100 Results.txt
