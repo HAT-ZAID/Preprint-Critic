@@ -122,12 +122,14 @@ offline in [`comparison/metrics_v3a.json`](comparison/metrics_v3a.json).
 
 ```
 Notebooks/Preprint_Critic_V3.ipynb   the full pipeline, 48 cells, outputs recorded
+Notebooks/Preprint_Critic_Kaggle_Inference.ipynb   baseline/adapter generation on a T4
 rc_project_adapter_V3/               trained LoRA adapter (fp32 weights, 63 MiB)
   adapter_model.safetensors            504 tensors, 16,515,072 params
   adapter_config.json                  LoRA hyperparams + base model
   trainer_state.json                   350-step loss/eval history
   training_args.bin                    resolved TrainingArguments
 comparison/                          10-sample pilot: paired outputs + metrics
+  kaggle_sample_papers.jsonl           25 held-out papers for the Kaggle notebook
 MODEL_CARD.md                        model card
 scripts/evaluate.py                  offline ROUGE-L / format / grounding metrics
 tests/                               CPU-only contract tests over the artifacts
@@ -172,6 +174,14 @@ so a plain load freezes the LoRA weights.
 The prompt must match training. `prompt_for` in the notebook is the source of truth; the template is
 applied with `add_generation_prompt=True`, which renders `assistant\n` with no thinking block on
 this checkpoint. The notebook asserts that shape before training begins.
+
+## Generate on Kaggle
+
+`Notebooks/Preprint_Critic_Kaggle_Inference.ipynb` runs the base and the adapter on held-out papers
+with the training prompt and sampling, on one T4. It writes JSONL/CSV outputs for Save Version and
+falls back to a committed 25-paper sample when no Kaggle dataset is attached. Set `N_PAPERS` (up to
+172 unique papers with the full test split) and `PAPER_IDS` to control the sample; `RESUME = True`
+continues a session without regenerating completed `(paper_id, arm)` pairs.
 
 ## Engineering decisions
 
