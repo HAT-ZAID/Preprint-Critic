@@ -1,0 +1,800 @@
+{
+  "script": "scripts/evaluate.py",
+  "inputs": {
+    "comparison": "comparison/comparison_v3a.json",
+    "papers": "comparison/extracted_paper_texts.json",
+    "tokenizer": "rc_project_adapter_V3/tokenizer.json"
+  },
+  "n_samples": 10,
+  "definitions": {
+    "rouge_l": "ROUGE-L F-measure with beta=1.2 from a token-level LCS. Tokens are lowercased matches of [a-z0-9]+; P=LCS/len(candidate), R=LCS/len(reference), F=(1+beta^2)*P*R/(R+beta^2*P). 0.0 when the reference (or candidate) is empty or the LCS is 0.",
+    "template_keys": "Subset of [summary_of_the_paper, strengths, weaknesses, questions] found at the start of a line, case-insensitive, allowing leading '#', '*', '-', '>' or spaces and an optional ':' or '**'. has_all_four is true when all four keys are present. template_count counts reviews with at least one key; has_all_four_count counts reviews with all four.",
+    "citation_grounding": "All matches of \\b(?:Section|Sec\\.?|Table|Tab\\.?|Figure|Fig\\.?)\\s*([0-9]+[A-Za-z]?), normalised to 'Section N', 'Table N' or 'Figure N'. A citation is grounded when its lowercased normalised form is a substring of the lowercased paper text. Grounding rate is grounded/total, 0.0 when there are no citations.",
+    "ngram_repeat_rate": "n=5 over lowercased whitespace words: 1 - distinct_5grams/total_5grams, 0.0 when fewer than 5 words."
+  },
+  "arms": {
+    "base": {
+      "n": 10,
+      "mean_words": 1421.4,
+      "median_words": 1465.5,
+      "mean_rouge_l": 0.123088,
+      "min_rouge_l": 0.085415,
+      "max_rouge_l": 0.139993,
+      "template_count": 1,
+      "has_all_four_count": 0,
+      "summary_of_the_paper_count": 0,
+      "citation_total": 24,
+      "grounded_citation_total": 20,
+      "citation_grounding_rate": 0.833333,
+      "mean_ngram_repeat_rate": 0.001512,
+      "mean_real_output_tokens": 2057.7,
+      "real_output_tokens": [
+        1919,
+        2295,
+        1996,
+        2057,
+        1849,
+        1648,
+        2187,
+        2261,
+        2164,
+        2201
+      ],
+      "recorded_output_tokens": [
+        2296,
+        2296,
+        2296,
+        2296,
+        2296,
+        2262,
+        2262,
+        2262,
+        2262,
+        2262
+      ],
+      "hit_cap_count": 0
+    },
+    "fine": {
+      "n": 10,
+      "mean_words": 243.7,
+      "median_words": 277.0,
+      "mean_rouge_l": 0.174708,
+      "min_rouge_l": 0.120057,
+      "max_rouge_l": 0.221255,
+      "template_count": 9,
+      "has_all_four_count": 0,
+      "summary_of_the_paper_count": 6,
+      "citation_total": 3,
+      "grounded_citation_total": 1,
+      "citation_grounding_rate": 0.333333,
+      "mean_ngram_repeat_rate": 0.065165,
+      "mean_real_output_tokens": 316.4,
+      "real_output_tokens": [
+        240,
+        368,
+        392,
+        182,
+        390,
+        413,
+        327,
+        200,
+        270,
+        382
+      ],
+      "recorded_output_tokens": [
+        393,
+        393,
+        393,
+        393,
+        393,
+        414,
+        414,
+        414,
+        414,
+        414
+      ],
+      "hit_cap_count": 0
+    },
+    "reference": {
+      "n": 10,
+      "mean_words": 412.1,
+      "median_words": 425.5,
+      "mean_rouge_l": 1.0,
+      "min_rouge_l": 1.0,
+      "max_rouge_l": 1.0,
+      "template_count": 5,
+      "has_all_four_count": 0,
+      "summary_of_the_paper_count": 5,
+      "citation_total": 20,
+      "grounded_citation_total": 16,
+      "citation_grounding_rate": 0.8,
+      "mean_ngram_repeat_rate": 0.00576,
+      "mean_real_output_tokens": 580.0,
+      "real_output_tokens": [
+        446,
+        487,
+        867,
+        658,
+        846,
+        122,
+        716,
+        444,
+        525,
+        689
+      ],
+      "recorded_output_tokens": null,
+      "hit_cap_count": null
+    }
+  },
+  "head_to_head": {
+    "fine_wins": 9,
+    "base_wins": 1,
+    "ties": 0
+  },
+  "per_sample": [
+    {
+      "paper_id": "AjGC97Aofee",
+      "base": {
+        "words": 1293,
+        "chars": 9458,
+        "real_output_tokens": 1919,
+        "recorded_output_tokens": 2296,
+        "hit_cap": false,
+        "rouge_l": 0.118344,
+        "template_keys_present": [],
+        "has_all_four": false,
+        "citations": [
+          "Table 2",
+          "Figure 3"
+        ],
+        "citation_count": 2,
+        "grounded_citations": [
+          "Table 2",
+          "Figure 3"
+        ],
+        "grounded_citation_count": 2,
+        "citation_grounding_rate": 1.0,
+        "ngram_repeat_rate": 0.003103
+      },
+      "fine": {
+        "words": 169,
+        "chars": 1206,
+        "real_output_tokens": 240,
+        "recorded_output_tokens": 393,
+        "hit_cap": false,
+        "rouge_l": 0.188854,
+        "template_keys_present": [
+          "summary_of_the_paper",
+          "weaknesses"
+        ],
+        "has_all_four": false,
+        "citations": [],
+        "citation_count": 0,
+        "grounded_citations": [],
+        "grounded_citation_count": 0,
+        "citation_grounding_rate": 0.0,
+        "ngram_repeat_rate": 0.024242
+      },
+      "reference": {
+        "words": 367,
+        "chars": 2414,
+        "real_output_tokens": 446,
+        "recorded_output_tokens": null,
+        "hit_cap": null,
+        "rouge_l": 1.0,
+        "template_keys_present": [
+          "summary_of_the_paper"
+        ],
+        "has_all_four": false,
+        "citations": [],
+        "citation_count": 0,
+        "grounded_citations": [],
+        "grounded_citation_count": 0,
+        "citation_grounding_rate": 0.0,
+        "ngram_repeat_rate": 0.0
+      }
+    },
+    {
+      "paper_id": "fadoo8Xs6pH",
+      "base": {
+        "words": 1543,
+        "chars": 11108,
+        "real_output_tokens": 2295,
+        "recorded_output_tokens": 2296,
+        "hit_cap": false,
+        "rouge_l": 0.122235,
+        "template_keys_present": [],
+        "has_all_four": false,
+        "citations": [
+          "Section 6"
+        ],
+        "citation_count": 1,
+        "grounded_citations": [],
+        "grounded_citation_count": 0,
+        "citation_grounding_rate": 0.0,
+        "ngram_repeat_rate": 0.001949
+      },
+      "fine": {
+        "words": 275,
+        "chars": 1774,
+        "real_output_tokens": 368,
+        "recorded_output_tokens": 393,
+        "hit_cap": false,
+        "rouge_l": 0.221255,
+        "template_keys_present": [
+          "summary_of_the_paper",
+          "weaknesses"
+        ],
+        "has_all_four": false,
+        "citations": [],
+        "citation_count": 0,
+        "grounded_citations": [],
+        "grounded_citation_count": 0,
+        "citation_grounding_rate": 0.0,
+        "ngram_repeat_rate": 0.00738
+      },
+      "reference": {
+        "words": 319,
+        "chars": 2272,
+        "real_output_tokens": 487,
+        "recorded_output_tokens": null,
+        "hit_cap": null,
+        "rouge_l": 1.0,
+        "template_keys_present": [
+          "summary_of_the_paper",
+          "weaknesses"
+        ],
+        "has_all_four": false,
+        "citations": [],
+        "citation_count": 0,
+        "grounded_citations": [],
+        "grounded_citation_count": 0,
+        "citation_grounding_rate": 0.0,
+        "ngram_repeat_rate": 0.006349
+      }
+    },
+    {
+      "paper_id": "4RwkbKZhGV",
+      "base": {
+        "words": 1376,
+        "chars": 9977,
+        "real_output_tokens": 1996,
+        "recorded_output_tokens": 2296,
+        "hit_cap": false,
+        "rouge_l": 0.138503,
+        "template_keys_present": [],
+        "has_all_four": false,
+        "citations": [
+          "Figure 1",
+          "Table 2"
+        ],
+        "citation_count": 2,
+        "grounded_citations": [
+          "Figure 1",
+          "Table 2"
+        ],
+        "grounded_citation_count": 2,
+        "citation_grounding_rate": 1.0,
+        "ngram_repeat_rate": 0.001458
+      },
+      "fine": {
+        "words": 308,
+        "chars": 2124,
+        "real_output_tokens": 392,
+        "recorded_output_tokens": 393,
+        "hit_cap": false,
+        "rouge_l": 0.177785,
+        "template_keys_present": [
+          "summary_of_the_paper",
+          "weaknesses"
+        ],
+        "has_all_four": false,
+        "citations": [],
+        "citation_count": 0,
+        "grounded_citations": [],
+        "grounded_citation_count": 0,
+        "citation_grounding_rate": 0.0,
+        "ngram_repeat_rate": 0.026316
+      },
+      "reference": {
+        "words": 572,
+        "chars": 3927,
+        "real_output_tokens": 867,
+        "recorded_output_tokens": null,
+        "hit_cap": null,
+        "rouge_l": 1.0,
+        "template_keys_present": [
+          "summary_of_the_paper"
+        ],
+        "has_all_four": false,
+        "citations": [
+          "Table 2",
+          "Table 1"
+        ],
+        "citation_count": 2,
+        "grounded_citations": [
+          "Table 2",
+          "Table 1"
+        ],
+        "grounded_citation_count": 2,
+        "citation_grounding_rate": 1.0,
+        "ngram_repeat_rate": 0.0
+      }
+    },
+    {
+      "paper_id": "ot2ORiBqTa1",
+      "base": {
+        "words": 1482,
+        "chars": 11111,
+        "real_output_tokens": 2057,
+        "recorded_output_tokens": 2296,
+        "hit_cap": false,
+        "rouge_l": 0.133862,
+        "template_keys_present": [],
+        "has_all_four": false,
+        "citations": [],
+        "citation_count": 0,
+        "grounded_citations": [],
+        "grounded_citation_count": 0,
+        "citation_grounding_rate": 0.0,
+        "ngram_repeat_rate": 0.0
+      },
+      "fine": {
+        "words": 142,
+        "chars": 981,
+        "real_output_tokens": 182,
+        "recorded_output_tokens": 393,
+        "hit_cap": false,
+        "rouge_l": 0.120057,
+        "template_keys_present": [
+          "weaknesses",
+          "questions"
+        ],
+        "has_all_four": false,
+        "citations": [],
+        "citation_count": 0,
+        "grounded_citations": [],
+        "grounded_citation_count": 0,
+        "citation_grounding_rate": 0.0,
+        "ngram_repeat_rate": 0.072464
+      },
+      "reference": {
+        "words": 516,
+        "chars": 3271,
+        "real_output_tokens": 658,
+        "recorded_output_tokens": null,
+        "hit_cap": null,
+        "rouge_l": 1.0,
+        "template_keys_present": [],
+        "has_all_four": false,
+        "citations": [
+          "Table 2"
+        ],
+        "citation_count": 1,
+        "grounded_citations": [
+          "Table 2"
+        ],
+        "grounded_citation_count": 1,
+        "citation_grounding_rate": 1.0,
+        "ngram_repeat_rate": 0.009766
+      }
+    },
+    {
+      "paper_id": "csARsNPKgVi",
+      "base": {
+        "words": 1280,
+        "chars": 9585,
+        "real_output_tokens": 1849,
+        "recorded_output_tokens": 2296,
+        "hit_cap": false,
+        "rouge_l": 0.139993,
+        "template_keys_present": [],
+        "has_all_four": false,
+        "citations": [
+          "Table 5",
+          "Section 3",
+          "Table 3"
+        ],
+        "citation_count": 3,
+        "grounded_citations": [
+          "Table 5",
+          "Section 3",
+          "Table 3"
+        ],
+        "grounded_citation_count": 3,
+        "citation_grounding_rate": 1.0,
+        "ngram_repeat_rate": 0.000784
+      },
+      "fine": {
+        "words": 286,
+        "chars": 2052,
+        "real_output_tokens": 390,
+        "recorded_output_tokens": 393,
+        "hit_cap": false,
+        "rouge_l": 0.184201,
+        "template_keys_present": [
+          "summary_of_the_paper"
+        ],
+        "has_all_four": false,
+        "citations": [
+          "Table 4"
+        ],
+        "citation_count": 1,
+        "grounded_citations": [
+          "Table 4"
+        ],
+        "grounded_citation_count": 1,
+        "citation_grounding_rate": 1.0,
+        "ngram_repeat_rate": 0.156028
+      },
+      "reference": {
+        "words": 556,
+        "chars": 3523,
+        "real_output_tokens": 846,
+        "recorded_output_tokens": null,
+        "hit_cap": null,
+        "rouge_l": 1.0,
+        "template_keys_present": [
+          "summary_of_the_paper"
+        ],
+        "has_all_four": false,
+        "citations": [
+          "Section 3",
+          "Section 3",
+          "Section 3",
+          "Section 4",
+          "Section 3",
+          "Figure 2",
+          "Section 4",
+          "Figure 1"
+        ],
+        "citation_count": 8,
+        "grounded_citations": [
+          "Section 3",
+          "Section 3",
+          "Section 3",
+          "Section 4",
+          "Section 3",
+          "Figure 2",
+          "Section 4",
+          "Figure 1"
+        ],
+        "grounded_citation_count": 8,
+        "citation_grounding_rate": 1.0,
+        "ngram_repeat_rate": 0.001812
+      }
+    },
+    {
+      "paper_id": "FoazbSYjXoc",
+      "base": {
+        "words": 1232,
+        "chars": 9026,
+        "real_output_tokens": 1648,
+        "recorded_output_tokens": 2262,
+        "hit_cap": false,
+        "rouge_l": 0.085415,
+        "template_keys_present": [],
+        "has_all_four": false,
+        "citations": [],
+        "citation_count": 0,
+        "grounded_citations": [],
+        "grounded_citation_count": 0,
+        "citation_grounding_rate": 0.0,
+        "ngram_repeat_rate": 0.003257
+      },
+      "fine": {
+        "words": 349,
+        "chars": 2074,
+        "real_output_tokens": 413,
+        "recorded_output_tokens": 414,
+        "hit_cap": false,
+        "rouge_l": 0.175064,
+        "template_keys_present": [],
+        "has_all_four": false,
+        "citations": [],
+        "citation_count": 0,
+        "grounded_citations": [],
+        "grounded_citation_count": 0,
+        "citation_grounding_rate": 0.0,
+        "ngram_repeat_rate": 0.031884
+      },
+      "reference": {
+        "words": 103,
+        "chars": 682,
+        "real_output_tokens": 122,
+        "recorded_output_tokens": null,
+        "hit_cap": null,
+        "rouge_l": 1.0,
+        "template_keys_present": [],
+        "has_all_four": false,
+        "citations": [],
+        "citation_count": 0,
+        "grounded_citations": [],
+        "grounded_citation_count": 0,
+        "citation_grounding_rate": 0.0,
+        "ngram_repeat_rate": 0.020202
+      }
+    },
+    {
+      "paper_id": "TScOKQW67Mj",
+      "base": {
+        "words": 1458,
+        "chars": 10659,
+        "real_output_tokens": 2187,
+        "recorded_output_tokens": 2262,
+        "hit_cap": false,
+        "rouge_l": 0.120566,
+        "template_keys_present": [],
+        "has_all_four": false,
+        "citations": [
+          "Section 3",
+          "Table 1",
+          "Figure 2",
+          "Section 5",
+          "Figure 4",
+          "Table 1"
+        ],
+        "citation_count": 6,
+        "grounded_citations": [
+          "Section 3",
+          "Table 1",
+          "Figure 2",
+          "Section 5",
+          "Figure 4",
+          "Table 1"
+        ],
+        "grounded_citation_count": 6,
+        "citation_grounding_rate": 1.0,
+        "ngram_repeat_rate": 0.001376
+      },
+      "fine": {
+        "words": 279,
+        "chars": 1842,
+        "real_output_tokens": 327,
+        "recorded_output_tokens": 414,
+        "hit_cap": false,
+        "rouge_l": 0.149655,
+        "template_keys_present": [
+          "weaknesses"
+        ],
+        "has_all_four": false,
+        "citations": [],
+        "citation_count": 0,
+        "grounded_citations": [],
+        "grounded_citation_count": 0,
+        "citation_grounding_rate": 0.0,
+        "ngram_repeat_rate": 0.010909
+      },
+      "reference": {
+        "words": 468,
+        "chars": 2927,
+        "real_output_tokens": 716,
+        "recorded_output_tokens": null,
+        "hit_cap": null,
+        "rouge_l": 1.0,
+        "template_keys_present": [],
+        "has_all_four": false,
+        "citations": [
+          "Section 4",
+          "Section 4"
+        ],
+        "citation_count": 2,
+        "grounded_citations": [
+          "Section 4",
+          "Section 4"
+        ],
+        "grounded_citation_count": 2,
+        "citation_grounding_rate": 1.0,
+        "ngram_repeat_rate": 0.0
+      }
+    },
+    {
+      "paper_id": "SyeUMRNYDr",
+      "base": {
+        "words": 1594,
+        "chars": 11822,
+        "real_output_tokens": 2261,
+        "recorded_output_tokens": 2262,
+        "hit_cap": false,
+        "rouge_l": 0.116348,
+        "template_keys_present": [],
+        "has_all_four": false,
+        "citations": [
+          "Figure 1"
+        ],
+        "citation_count": 1,
+        "grounded_citations": [
+          "Figure 1"
+        ],
+        "grounded_citation_count": 1,
+        "citation_grounding_rate": 1.0,
+        "ngram_repeat_rate": 0.002516
+      },
+      "fine": {
+        "words": 152,
+        "chars": 1068,
+        "real_output_tokens": 200,
+        "recorded_output_tokens": 414,
+        "hit_cap": false,
+        "rouge_l": 0.177058,
+        "template_keys_present": [
+          "summary_of_the_paper",
+          "weaknesses"
+        ],
+        "has_all_four": false,
+        "citations": [],
+        "citation_count": 0,
+        "grounded_citations": [],
+        "grounded_citation_count": 0,
+        "citation_grounding_rate": 0.0,
+        "ngram_repeat_rate": 0.02027
+      },
+      "reference": {
+        "words": 355,
+        "chars": 2240,
+        "real_output_tokens": 444,
+        "recorded_output_tokens": null,
+        "hit_cap": null,
+        "rouge_l": 1.0,
+        "template_keys_present": [],
+        "has_all_four": false,
+        "citations": [
+          "Figure 2"
+        ],
+        "citation_count": 1,
+        "grounded_citations": [
+          "Figure 2"
+        ],
+        "grounded_citation_count": 1,
+        "citation_grounding_rate": 1.0,
+        "ngram_repeat_rate": 0.0
+      }
+    },
+    {
+      "paper_id": "x_n34KpwAvI",
+      "base": {
+        "words": 1473,
+        "chars": 10709,
+        "real_output_tokens": 2164,
+        "recorded_output_tokens": 2262,
+        "hit_cap": false,
+        "rouge_l": 0.126091,
+        "template_keys_present": [
+          "strengths",
+          "weaknesses"
+        ],
+        "has_all_four": false,
+        "citations": [
+          "Figure 3",
+          "Section 4"
+        ],
+        "citation_count": 2,
+        "grounded_citations": [
+          "Figure 3"
+        ],
+        "grounded_citation_count": 1,
+        "citation_grounding_rate": 0.5,
+        "ngram_repeat_rate": 0.000681
+      },
+      "fine": {
+        "words": 195,
+        "chars": 1316,
+        "real_output_tokens": 270,
+        "recorded_output_tokens": 414,
+        "hit_cap": false,
+        "rouge_l": 0.170913,
+        "template_keys_present": [
+          "weaknesses",
+          "questions"
+        ],
+        "has_all_four": false,
+        "citations": [],
+        "citation_count": 0,
+        "grounded_citations": [],
+        "grounded_citation_count": 0,
+        "citation_grounding_rate": 0.0,
+        "ngram_repeat_rate": 0.0
+      },
+      "reference": {
+        "words": 383,
+        "chars": 2451,
+        "real_output_tokens": 525,
+        "recorded_output_tokens": null,
+        "hit_cap": null,
+        "rouge_l": 1.0,
+        "template_keys_present": [],
+        "has_all_four": false,
+        "citations": [],
+        "citation_count": 0,
+        "grounded_citations": [],
+        "grounded_citation_count": 0,
+        "citation_grounding_rate": 0.0,
+        "ngram_repeat_rate": 0.013193
+      }
+    },
+    {
+      "paper_id": "wClmeg9u7G",
+      "base": {
+        "words": 1483,
+        "chars": 11396,
+        "real_output_tokens": 2201,
+        "recorded_output_tokens": 2262,
+        "hit_cap": false,
+        "rouge_l": 0.129525,
+        "template_keys_present": [],
+        "has_all_four": false,
+        "citations": [
+          "Section 3",
+          "Section 1",
+          "Figure 1",
+          "Table 2",
+          "Figure 1",
+          "Section 5",
+          "Table 2"
+        ],
+        "citation_count": 7,
+        "grounded_citations": [
+          "Section 3",
+          "Figure 1",
+          "Table 2",
+          "Figure 1",
+          "Table 2"
+        ],
+        "grounded_citation_count": 5,
+        "citation_grounding_rate": 0.714286,
+        "ngram_repeat_rate": 0.0
+      },
+      "fine": {
+        "words": 282,
+        "chars": 1868,
+        "real_output_tokens": 382,
+        "recorded_output_tokens": 414,
+        "hit_cap": false,
+        "rouge_l": 0.18224,
+        "template_keys_present": [
+          "summary_of_the_paper",
+          "weaknesses"
+        ],
+        "has_all_four": false,
+        "citations": [
+          "Section 4",
+          "Section 4"
+        ],
+        "citation_count": 2,
+        "grounded_citations": [],
+        "grounded_citation_count": 0,
+        "citation_grounding_rate": 0.0,
+        "ngram_repeat_rate": 0.302158
+      },
+      "reference": {
+        "words": 482,
+        "chars": 3124,
+        "real_output_tokens": 689,
+        "recorded_output_tokens": null,
+        "hit_cap": null,
+        "rouge_l": 1.0,
+        "template_keys_present": [
+          "summary_of_the_paper"
+        ],
+        "has_all_four": false,
+        "citations": [
+          "Table 1",
+          "Section 1",
+          "Table 1",
+          "Section 4",
+          "Section 5",
+          "Section 4"
+        ],
+        "citation_count": 6,
+        "grounded_citations": [
+          "Table 1",
+          "Table 1"
+        ],
+        "grounded_citation_count": 2,
+        "citation_grounding_rate": 0.333333,
+        "ngram_repeat_rate": 0.006276
+      }
+    }
+  ],
+  "notes": "Recorded output token counts (base_output_tokens / fine_output_tokens) come from the generation run and use padded batch width, i.e. every sample in a batch shares the longest sequence's length, so they are batch-level constants and NOT per-sample output lengths. real_output_tokens (tokenizer.encode(text, add_special_tokens=False)) is the per-sample measure. The reference arm has no recorded generation count. The cross-check figure of 0/10, 6/10, 5/10 for the template metric equals reviews whose first line declares summary_of_the_paper, reported here as summary_of_the_paper_count; the stricter four-key metric is has_all_four_count."
+}
