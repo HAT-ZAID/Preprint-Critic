@@ -18,14 +18,16 @@ LoRA r=8 · Qwen3-4B-Instruct-2507 · peft 0.21.2 · transformers 5.19.0 · torc
 
 ## What it does
 
-The prompt is the paper plus a five-point evidence checklist — main claims and assumptions · whether
-the method and experiments actually support them · whether the baselines and comparisons are
-sufficient · what limitations or alternative explanations weaken the conclusion · whether each
-criticism can be justified from the paper. The target is the real human review, and loss is masked
-to the completion only.
+The prompt is a five-paragraph instruction brief followed by the paper text (`Paper:\n{paper}`).
+The brief asks for a substantive, fair review; requires claims to be grounded in the manuscript and
+forbids invented results, citations, numbers, and section/table/figure references; asks for the most
+consequential issues with actionable questions; names the dimensions to assess (novelty,
+methodological validity, baseline adequacy, limitations, reproducibility); and asks the model to
+avoid boilerplate, fixed templates, and unsupported verdicts. The target is the real human review,
+and loss is masked to the completion only.
 
-The checklist is the part I'd point at first: it encodes concrete failure modes as explicit checks,
-so the model is pushed toward *evidence* rather than generic praise.
+The instruction brief is the part I'd point at first: it encodes concrete failure modes as explicit
+requirements, so the model is pushed toward *evidence* rather than generic praise.
 
 ## Approach
 
@@ -33,10 +35,13 @@ so the model is pushed toward *evidence* rather than generic praise.
 (373,425 files). Indexed against the sampled ids at a 100% match rate, with a format census run
 before choosing `.md` over `.tex` rather than assuming one.
 
-**Splitting by paper, not by row.** Reviews expand from one paper into N review rows (2,000 papers
-→ 7,040 rows), so a row-level split would put two reviews of the same paper on both sides of the
-boundary. The split is keyed on `paper_id`: 1,600 / 200 / 200 papers → 2,800 / 280 / 280 rows.
-Verified: **0 of 172** test papers appear in train.
+**Splitting by paper, then capping rows.** Reviews expand from one paper into N review rows
+(2,000 papers → 7,040 rows after the 100-character filter), so a row-level split would put two
+reviews of the same paper on both sides of the boundary. Papers are assigned 80/10/10 by
+`paper_id` (1,600 / 200 / 200); each split is then shuffled and capped at 2,800 / 280 / 280 rows.
+The caps discard 3,680 of the 7,040 eligible rows, so the retained rows cover 1,439 / 163 / 172
+papers; 161 / 37 / 28 selected papers contribute no retained row. Verified: **0 of 172** retained
+test papers appear in train.
 
 **Masking the prompt.** The prompt/token boundary is asserted before labels are masked, and every
 row is asserted to keep at least one unmasked target token — a row can never silently train on
@@ -65,7 +70,7 @@ what truncates.
 | Validation loss (first eval, step 80) | 2.2040 |
 | Trainable params | 16,515,072 (0.4089%) |
 | Optimizer steps | 350 (1 epoch, effective batch 8) |
-| Peak VRAM | 29.13 GiB allocated / 30.58 GiB reserved |
+| Peak VRAM (resumed session, steps 241–350) | 29.13 GiB allocated / 30.58 GiB reserved |
 | Hardware | A100-SXM4-40GB |
 
 Validation ran every 80 steps, which is what makes "converged" distinguishable from "stopped early":
@@ -103,10 +108,11 @@ held-out papers. **This is a pilot, not a benchmark** — no human evaluation, n
 | Mean 5-gram repetition | 0.2% | 6.5% (max 30%) | 0.6% |
 
 The adapter wins on ROUGE-L in **9 of 10** papers and tracks the dataset's review format and length
-far better than the base model, which writes ~1,400-word essays and ends every sample with the same
-"*Reviewer recommendation: Major revision.*" line. But it also cites the paper *less* — 3 references
-with 1 grounded, against 24 with 20 — repeats whole paragraphs in one of the ten samples (30%
-5-gram repetition), and its 244 words are short against a 412-word human reference.
+far better than the base model, which writes ~1,400-word essays and ends 3 of 10 samples with a
+canned verdict (for example, "*Reviewer recommendation: Major revision.*"). But it also cites the
+paper *less* — 3 references with 1 grounded, against 24 with 20 — repeats whole paragraphs in one of
+the ten samples (30% 5-gram repetition), and its 244 words are short against a 412-word human
+reference.
 
 The honest reading: **it learned the shape of the dataset's reviews before the evidence.** ROUGE-L
 rewards length and template overlap, so this is not a quality claim. Numbers are re-computed
@@ -125,7 +131,7 @@ comparison/                          10-sample pilot: paired outputs + metrics
 MODEL_CARD.md                        model card
 scripts/evaluate.py                  offline ROUGE-L / format / grounding metrics
 tests/                               CPU-only contract tests over the artifacts
-requirements.txt                     pinned stack
+requirements.txt                     core stack
 ```
 
 Not committed, but regenerable: `Checkpoint/` (optimizer states, 200 MB),
@@ -135,8 +141,8 @@ are gitignored; the notebook rebuilds them.
 ## Run it
 
 ```bash
-pip install -r requirements-dev.txt   # CPU only, enough for the tests
-python -m pytest tests -q
+pip install -r requirements-dev.txt   # CPU only, enough for the artifact tests
+python -m pytest tests -q             # dataset tests skip unless rc_project_datasets_V3/ exists
 
 pip install -r requirements.txt       # full training stack
 ```
@@ -148,10 +154,15 @@ Colab-bound: Drive paths are hardcoded.
 ## Load the adapter
 
 ```python
-from transformers import AutoModelForCausalLM, AutoTokenizer
+import torch
+from transformers import AutoModelForCausalLM
 from peft import PeftModel
 
-base = AutoModelForCausalLM.from_pretrained("Qwen/Qwen3-4B-Instruct-2507")
+base = AutoModelForCausalLM.from_pretrained(
+    "Qwen/Qwen3-4B-Instruct-2507",
+    torch_dtype=torch.bfloat16,
+    device_map="auto",
+)
 model = PeftModel.from_pretrained(base, "rc_project_adapter_V3")
 ```
 
@@ -180,8 +191,10 @@ saved adapter is the best validation checkpoint — which here is also the final
 
 ## Open work
 
-- **The committed pilot is 10 rows, and `BASELINE_N` in the notebook is 25.** The next full run
-  changes one constant and re-executes generation; nothing else needs to move.
+- **The committed pilot is 10 rows; the frozen notebook sets `BASELINE_N = 25`.** Set
+  `BASELINE_N = 10` to reproduce the committed `comparison_v3a.json`,
+  `baseline_results_v3a.json`, and `metrics_v3a.json`, or regenerate all three plus the 10-row
+  assertions in `tests/test_results.py` for 25.
 - **Token accounting in the committed JSONs is padded.** `output_tokens` and `hit_cap` are read from
   the padded batch width, so counts repeat within a batch (base 2,296 × 5 and 2,262 × 5; adapter
   393 / 414). Real lengths are base 1,648–2,295 and adapter 182–413. `comparison/metrics_v3a.json`

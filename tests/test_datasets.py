@@ -26,6 +26,11 @@ SAMPLE_SIZE = 32
 
 JSONL_PATH = DATASETS_DIR / "test_dataset_untokenized.jsonl"
 
+pytestmark = pytest.mark.skipif(
+    not DATASETS_DIR.is_dir(),
+    reason="rc_project_datasets_V3/ is gitignored; regenerate it with the notebook",
+)
+
 
 @pytest.fixture(scope="session")
 def datasets_by_variant():

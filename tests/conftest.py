@@ -1,7 +1,9 @@
 """Shared helpers for the Re^2 LoRA artifact contract suite.
 
-The suite reads the artifacts that ship with the repository only. It never
-downloads the base model, never mutates a file, and never needs a GPU.
+The artifact tests read only files committed to the repository. The dataset
+contract tests additionally require the gitignored ``rc_project_datasets_V3/``
+and skip when it is absent. Nothing here downloads the base model, mutates a
+file, or needs a GPU.
 """
 
 import json

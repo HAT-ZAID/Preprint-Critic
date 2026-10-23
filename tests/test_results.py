@@ -14,7 +14,7 @@ from conftest import REPO_ROOT, load_json
 COMPARISON_DIR = REPO_ROOT / "comparison"
 COMPARISON_PATH = COMPARISON_DIR / "comparison_v3a.json"
 BASELINE_PATH = COMPARISON_DIR / "baseline_results_v3a.json"
-FINETUNE_PATH = REPO_ROOT / "rc_project_datasets_V3" / "finetune_results_v3a.json"
+FINETUNE_PATH = COMPARISON_DIR / "finetune_results_v3a.json"
 EXTRACTED_TEXTS_PATH = COMPARISON_DIR / "extracted_paper_texts.json"
 TOKENIZER_PATH = REPO_ROOT / "rc_project_adapter_V3" / "tokenizer.json"
 
@@ -23,7 +23,7 @@ MAX_REVIEW_TOKENS = 16_384
 
 COMPARISON = load_json("comparison/comparison_v3a.json")
 BASELINE = load_json("comparison/baseline_results_v3a.json")
-FINETUNE = load_json("rc_project_datasets_V3/finetune_results_v3a.json")
+FINETUNE = load_json("comparison/finetune_results_v3a.json")
 
 COMPARISON_KEYS = {
     "paper_id",
@@ -215,11 +215,12 @@ def test_reference_reviews_are_distinct():
     ],
     ids=["comparison", "baseline", "finetune"],
 )
-def test_no_generation_hit_the_cap(filename, rows, fields):
-    """No recorded generation may have been truncated by the token cap.
+def test_recorded_hit_cap_flags_are_false(filename, rows, fields):
+    """Schema check only: the stored ``*_hit_cap`` flags are false.
 
-    These ten reviews are the qualitative evidence for the fine-tune; a capped
-    generation is incomplete and cannot be compared fairly.
+    The flags are computed from padded batch width (README, Open work), so they
+    do not prove per-sample completeness; ``test_reviews_fit_the_context_window``
+    is the re-tokenized length check.
     """
     for row_index, row in enumerate(rows):
         for field in fields:
