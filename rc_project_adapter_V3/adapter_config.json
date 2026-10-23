@@ -32,13 +32,13 @@
   "rank_pattern": {},
   "revision": null,
   "target_modules": [
-    "o_proj",
+    "up_proj",
+    "k_proj",
+    "q_proj",
     "down_proj",
     "v_proj",
-    "up_proj",
     "gate_proj",
-    "q_proj",
-    "k_proj"
+    "o_proj"
   ],
   "target_parameters": null,
   "task_type": "CAUSAL_LM",
