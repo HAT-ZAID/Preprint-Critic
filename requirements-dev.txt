@@ -1,0 +1,7 @@
+# CPU-only dependencies for the artifact contract tests.
+# The training stack lives in requirements.txt; these are enough to run `pytest tests`.
+pytest>=8
+datasets
+numpy
+packaging
+tokenizers
