@@ -271,12 +271,10 @@ The snippet loads the base in bf16; it does not reproduce the 4-bit training con
 | `comparison/comparison_v3a.json` | 10-sample paired pilot outputs |
 | `comparison/baseline_results_v3a.json` | Base-model pilot outputs |
 | `comparison/finetune_results_v3a.json` | Fine-tune pilot outputs |
-| `comparison/kaggle_sample_papers.jsonl` | 25 held-out papers for the Kaggle inference notebook |
 | `comparison/metrics_v3a.json` | Re-tokenized lengths, ROUGE-L, format, grounding, repetition |
 | `scripts/evaluate.py` | Regenerates the metrics file |
 | `tests/` | CPU-only contract tests over the artifacts |
 | `Notebooks/Preprint_Critic_V3.ipynb` | Training, evaluation, and pilot notebook |
-| `Notebooks/Preprint_Critic_Kaggle_Inference.ipynb` | Baseline/adapter generation on one T4 |
 | `requirements.txt` | Core training stack |
 | `requirements-dev.txt` | Test-only dependencies |
 
