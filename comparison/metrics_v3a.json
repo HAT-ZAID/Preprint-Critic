@@ -8,7 +8,7 @@
   "n_samples": 10,
   "definitions": {
     "rouge_l": "ROUGE-L F-measure with beta=1.2 from a token-level LCS. Tokens are lowercased matches of [a-z0-9]+; P=LCS/len(candidate), R=LCS/len(reference), F=(1+beta^2)*P*R/(R+beta^2*P). 0.0 when the reference (or candidate) is empty or the LCS is 0.",
-    "template_keys": "Subset of [summary_of_the_paper, strengths, weaknesses, questions] found at the start of a line, case-insensitive, allowing leading '#', '*', '-', '>' or spaces and an optional ':' or '**'. has_all_four is true when all four keys are present. template_count counts reviews with at least one key; has_all_four_count counts reviews with all four.",
+    "template_keys": "Subset of ['summary_of_the_paper', 'strength_and_weaknesses', 'clarity,_quality,_novelty_and_reproducibility', 'summary_of_the_review'] found at the start of a line, case-insensitive, allowing leading '#', '*', '-', '>' or spaces and an optional ':' or '**'. These are the four sections Re\u00b2's own reviews use. template_count counts reviews with at least one key; has_all_four_count counts reviews with all four; summary_of_the_paper_count counts reviews with that one key.",
     "citation_grounding": "All matches of \\b(?:Section|Sec\\.?|Table|Tab\\.?|Figure|Fig\\.?)\\s*([0-9]+[A-Za-z]?), normalised to 'Section N', 'Table N' or 'Figure N'. A citation is grounded when its lowercased normalised form is a substring of the lowercased paper text. Grounding rate is grounded/total, 0.0 when there are no citations.",
     "ngram_repeat_rate": "n=5 over lowercased whitespace words: 1 - distinct_5grams/total_5grams, 0.0 when fewer than 5 words."
   },
@@ -20,7 +20,7 @@
       "mean_rouge_l": 0.123088,
       "min_rouge_l": 0.085415,
       "max_rouge_l": 0.139993,
-      "template_count": 1,
+      "template_count": 0,
       "has_all_four_count": 0,
       "summary_of_the_paper_count": 0,
       "citation_total": 24,
@@ -61,8 +61,8 @@
       "mean_rouge_l": 0.174708,
       "min_rouge_l": 0.120057,
       "max_rouge_l": 0.221255,
-      "template_count": 9,
-      "has_all_four_count": 0,
+      "template_count": 6,
+      "has_all_four_count": 6,
       "summary_of_the_paper_count": 6,
       "citation_total": 3,
       "grounded_citation_total": 1,
@@ -103,7 +103,7 @@
       "min_rouge_l": 1.0,
       "max_rouge_l": 1.0,
       "template_count": 5,
-      "has_all_four_count": 0,
+      "has_all_four_count": 3,
       "summary_of_the_paper_count": 5,
       "citation_total": 20,
       "grounded_citation_total": 16,
@@ -165,9 +165,11 @@
         "rouge_l": 0.188854,
         "template_keys_present": [
           "summary_of_the_paper",
-          "weaknesses"
+          "strength_and_weaknesses",
+          "clarity,_quality,_novelty_and_reproducibility",
+          "summary_of_the_review"
         ],
-        "has_all_four": false,
+        "has_all_four": true,
         "citations": [],
         "citation_count": 0,
         "grounded_citations": [],
@@ -183,7 +185,8 @@
         "hit_cap": null,
         "rouge_l": 1.0,
         "template_keys_present": [
-          "summary_of_the_paper"
+          "summary_of_the_paper",
+          "summary_of_the_review"
         ],
         "has_all_four": false,
         "citations": [],
@@ -223,9 +226,11 @@
         "rouge_l": 0.221255,
         "template_keys_present": [
           "summary_of_the_paper",
-          "weaknesses"
+          "strength_and_weaknesses",
+          "clarity,_quality,_novelty_and_reproducibility",
+          "summary_of_the_review"
         ],
-        "has_all_four": false,
+        "has_all_four": true,
         "citations": [],
         "citation_count": 0,
         "grounded_citations": [],
@@ -242,9 +247,11 @@
         "rouge_l": 1.0,
         "template_keys_present": [
           "summary_of_the_paper",
-          "weaknesses"
+          "strength_and_weaknesses",
+          "clarity,_quality,_novelty_and_reproducibility",
+          "summary_of_the_review"
         ],
-        "has_all_four": false,
+        "has_all_four": true,
         "citations": [],
         "citation_count": 0,
         "grounded_citations": [],
@@ -286,9 +293,11 @@
         "rouge_l": 0.177785,
         "template_keys_present": [
           "summary_of_the_paper",
-          "weaknesses"
+          "strength_and_weaknesses",
+          "clarity,_quality,_novelty_and_reproducibility",
+          "summary_of_the_review"
         ],
-        "has_all_four": false,
+        "has_all_four": true,
         "citations": [],
         "citation_count": 0,
         "grounded_citations": [],
@@ -304,9 +313,12 @@
         "hit_cap": null,
         "rouge_l": 1.0,
         "template_keys_present": [
-          "summary_of_the_paper"
+          "summary_of_the_paper",
+          "strength_and_weaknesses",
+          "clarity,_quality,_novelty_and_reproducibility",
+          "summary_of_the_review"
         ],
-        "has_all_four": false,
+        "has_all_four": true,
         "citations": [
           "Table 2",
           "Table 1"
@@ -346,10 +358,7 @@
         "recorded_output_tokens": 393,
         "hit_cap": false,
         "rouge_l": 0.120057,
-        "template_keys_present": [
-          "weaknesses",
-          "questions"
-        ],
+        "template_keys_present": [],
         "has_all_four": false,
         "citations": [],
         "citation_count": 0,
@@ -413,9 +422,12 @@
         "hit_cap": false,
         "rouge_l": 0.184201,
         "template_keys_present": [
-          "summary_of_the_paper"
+          "summary_of_the_paper",
+          "strength_and_weaknesses",
+          "clarity,_quality,_novelty_and_reproducibility",
+          "summary_of_the_review"
         ],
-        "has_all_four": false,
+        "has_all_four": true,
         "citations": [
           "Table 4"
         ],
@@ -435,9 +447,12 @@
         "hit_cap": null,
         "rouge_l": 1.0,
         "template_keys_present": [
-          "summary_of_the_paper"
+          "summary_of_the_paper",
+          "strength_and_weaknesses",
+          "clarity,_quality,_novelty_and_reproducibility",
+          "summary_of_the_review"
         ],
-        "has_all_four": false,
+        "has_all_four": true,
         "citations": [
           "Section 3",
           "Section 3",
@@ -554,9 +569,7 @@
         "recorded_output_tokens": 414,
         "hit_cap": false,
         "rouge_l": 0.149655,
-        "template_keys_present": [
-          "weaknesses"
-        ],
+        "template_keys_present": [],
         "has_all_four": false,
         "citations": [],
         "citation_count": 0,
@@ -619,9 +632,11 @@
         "rouge_l": 0.177058,
         "template_keys_present": [
           "summary_of_the_paper",
-          "weaknesses"
+          "strength_and_weaknesses",
+          "clarity,_quality,_novelty_and_reproducibility",
+          "summary_of_the_review"
         ],
-        "has_all_four": false,
+        "has_all_four": true,
         "citations": [],
         "citation_count": 0,
         "grounded_citations": [],
@@ -659,10 +674,7 @@
         "recorded_output_tokens": 2262,
         "hit_cap": false,
         "rouge_l": 0.126091,
-        "template_keys_present": [
-          "strengths",
-          "weaknesses"
-        ],
+        "template_keys_present": [],
         "has_all_four": false,
         "citations": [
           "Figure 3",
@@ -683,10 +695,7 @@
         "recorded_output_tokens": 414,
         "hit_cap": false,
         "rouge_l": 0.170913,
-        "template_keys_present": [
-          "weaknesses",
-          "questions"
-        ],
+        "template_keys_present": [],
         "has_all_four": false,
         "citations": [],
         "citation_count": 0,
@@ -753,9 +762,11 @@
         "rouge_l": 0.18224,
         "template_keys_present": [
           "summary_of_the_paper",
-          "weaknesses"
+          "strength_and_weaknesses",
+          "clarity,_quality,_novelty_and_reproducibility",
+          "summary_of_the_review"
         ],
-        "has_all_four": false,
+        "has_all_four": true,
         "citations": [
           "Section 4",
           "Section 4"
@@ -774,7 +785,8 @@
         "hit_cap": null,
         "rouge_l": 1.0,
         "template_keys_present": [
-          "summary_of_the_paper"
+          "summary_of_the_paper",
+          "summary_of_the_review"
         ],
         "has_all_four": false,
         "citations": [
@@ -796,5 +808,5 @@
       }
     }
   ],
-  "notes": "Recorded output token counts (base_output_tokens / fine_output_tokens) come from the generation run and use padded batch width, i.e. every sample in a batch shares the longest sequence's length, so they are batch-level constants and NOT per-sample output lengths. real_output_tokens (tokenizer.encode(text, add_special_tokens=False)) is the per-sample measure. The reference arm has no recorded generation count. The cross-check figure of 0/10, 6/10, 5/10 for the template metric equals reviews whose first line declares summary_of_the_paper, reported here as summary_of_the_paper_count; the stricter four-key metric is has_all_four_count."
+  "notes": "Recorded output token counts (base_output_tokens / fine_output_tokens) come from the generation run and use padded batch width, i.e. every sample in a batch shares the longest sequence's length, so they are batch-level constants and NOT per-sample output lengths. real_output_tokens (tokenizer.encode(text, add_special_tokens=False)) is the per-sample measure. The reference arm has no recorded generation count. Template keys are the four sections Re\u00b2's own reviews use; summary_of_the_paper_count is a subset of has_all_four_count, so 0/10, 6/10, 5/10 for the first line and 0/10, 6/10, 3/10 for all four are different questions, not a contradiction."
 }

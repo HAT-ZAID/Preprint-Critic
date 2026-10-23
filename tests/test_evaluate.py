@@ -87,14 +87,14 @@ def test_grounded_citations_empty_when_paper_does_not_mention_them():
 # ---------------------------------------------------------------------------
 # Template keys
 # ---------------------------------------------------------------------------
-def test_template_keys_handles_bold_summary_and_heading_strengths():
+def test_template_keys_handles_bold_summary_and_headings():
     text = (
         "**summary_of_the_paper:** The paper studies pruning.\n"
-        "## Strengths\n"
+        "## strength_and_weaknesses\n"
         "- solid experiments\n"
-        "### Weaknesses\n"
+        "### clarity,_quality,_novelty_and_reproducibility\n"
         "- limited baselines\n"
-        "Questions:\n"
+        "summary_of_the_review:\n"
         "1. How many seeds were used?\n"
     )
     keys = evaluate.template_keys_present(text)

@@ -92,7 +92,7 @@ Train row length (paper + review) percentiles, p10 / p50 / p90 / p100: 8,038 / 1
 | Full four-key template | 16.0% |
 | `summary_of_the_paper` | 26.9% |
 
-The four-key template is `summary_of_the_paper`, `strengths`, `weaknesses`, `questions`. Because most rows carry none of the section keys, the adapter sees the full template in a minority of examples.
+The five keys counted above are the four Re² sections — `summary_of_the_paper`, `strength_and_weaknesses`, `clarity,_quality,_novelty_and_reproducibility`, `summary_of_the_review` — plus `main_review`. Only 16.0% of rows carry all four Re² sections, and 60.6% carry none of the five, so the adapter sees a fully structured review in a minority of examples.
 
 ## 5. Training procedure
 
@@ -132,11 +132,11 @@ This is a pilot, not a benchmark. It uses the same prompts and decoding settings
 | ROUGE-L vs human reference (mean) | 0.123 | 0.175 | - |
 | ROUGE-L range | 0.085–0.140 | 0.120–0.221 | - |
 | Opens with `summary_of_the_paper:` | 0/10 | 6/10 | 5/10 |
-| Any section header at line start | 1/10 | 9/10 | 5/10 |
+| Full Re² four-section template | 0/10 | 6/10 | 3/10 |
 | Section/Table/Figure citations (grounded) | 24 (20) | 3 (1) | 20 (16) |
 | Mean 5-gram repetition | 0.2% | 6.5% (max 30%) | 0.6% |
 
-"Grounded" means the cited section, table, or figure appears in the paper. None of the three arms emits all four Re² section keys at line start; the adapter instead opens 6 of 10 samples with `summary_of_the_paper:`, which the human references do 5 of 10 times.
+"Grounded" means the cited section, table, or figure appears in the paper. The adapter emits the full four-section Re² template in 6 of 10 samples; the base model does so in none, and the human references in 3. All six adapter samples that use the full template open with `summary_of_the_paper:`.
 
 The adapter learned the shape of the dataset's reviews, not yet the evidence. It wins on ROUGE-L in 9 of 10 papers and is better formatted than the base model's output, but it cites the paper less (3 citations, 1 grounded, against 24 and 20 for the base) and repeats paragraphs in one sample (30% 5-gram repetition). ROUGE-L rewards both length and template overlap, so the ROUGE-L gain is not evidence that the reviews are better. The pilot has 10 samples, no human evaluation, and no significance testing.
 
@@ -150,7 +150,7 @@ The adapter learned the shape of the dataset's reviews, not yet the evidence. It
 - **No matched baseline loss.** The base model was not evaluated for loss on the same validation and test rows, so the loss numbers have no like-for-like before/after comparison.
 - **Small pilot, one split.** The generation evidence is 10 papers with no significance testing. The test loss comes from a single 280-row split.
 - **Truncation is real.** 198 of 2,800 train papers and 27 of 280 test papers hit the 16,050-token paper cap; 36 train reviews and 2 test reviews hit the 1,750-token target cap. The effect of truncation on review quality was not measured.
-- **Weak formatting prior.** 60.6% of training rows carry none of the five section keys. Template-following is learned from a minority of the data, and none of the 10 pilot outputs used all four Re² section keys; 6 of 10 opened with `summary_of_the_paper:`.
+- **Weak formatting prior.** 60.6% of training rows carry none of the five section keys and only 16.0% carry all four Re² sections. Template-following is learned from a minority of the data: 6 of 10 pilot outputs used the full four-section template, and four did not.
 - **Domain and language.** Training and evaluation are English OpenReview papers in Re². Other venues, languages, and paper structures were not measured.
 - **No calibration or abstention.** The adapter has no mechanism to decline when the paper is out of domain, truncated, or unreadable, and no uncertainty estimate is provided.
 - **Repetition.** Mean 5-gram repetition is 6.5% for the adapter, 0.2% for the base model, and 0.6% for the human references. One adapter sample reaches 30% by repeating whole paragraphs between its strengths/weaknesses and clarity sections. Six of ten adapter samples are at or below 3.2%.

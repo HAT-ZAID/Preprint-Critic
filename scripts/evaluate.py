@@ -33,7 +33,15 @@ DEFAULT_OUT = REPO_ROOT / "comparison" / "metrics_v3a.json"
 
 ARMS = ("base", "fine", "reference")
 
-TEMPLATE_KEYS = ("summary_of_the_paper", "strengths", "weaknesses", "questions")
+#: The four sections Re²'s reviews use.  Detecting the dataset's own template
+#: matters more than a generic review outline: it is the shape the adapter was
+#: trained to reproduce, and the pilot is judged on whether it did.
+TEMPLATE_KEYS = (
+    "summary_of_the_paper",
+    "strength_and_weaknesses",
+    "clarity,_quality,_novelty_and_reproducibility",
+    "summary_of_the_review",
+)
 
 # Optional leading Markdown decoration: blockquote markers, headings, bullets,
 # emphasis and indentation.  ``\s`` is deliberately avoided so that a key can
@@ -268,12 +276,12 @@ DEFINITIONS = {
         "reference (or candidate) is empty or the LCS is 0."
     ),
     "template_keys": (
-        "Subset of [summary_of_the_paper, strengths, weaknesses, questions] "
-        "found at the start of a line, case-insensitive, allowing leading "
-        "'#', '*', '-', '>' or spaces and an optional ':' or '**'. "
-        "has_all_four is true when all four keys are present. template_count "
-        "counts reviews with at least one key; has_all_four_count counts "
-        "reviews with all four."
+        f"Subset of {list(TEMPLATE_KEYS)} found at the start of a line, "
+        "case-insensitive, allowing leading '#', '*', '-', '>' or spaces and "
+        "an optional ':' or '**'. These are the four sections Re²'s own "
+        "reviews use. template_count counts reviews with at least one key; "
+        "has_all_four_count counts reviews with all four; "
+        "summary_of_the_paper_count counts reviews with that one key."
     ),
     "citation_grounding": (
         "All matches of \\b(?:Section|Sec\\.?|Table|Tab\\.?|Figure|Fig\\.?)"
@@ -294,11 +302,11 @@ NOTES = (
     "sample in a batch shares the longest sequence's length, so they are "
     "batch-level constants and NOT per-sample output lengths. real_output_tokens "
     "(tokenizer.encode(text, add_special_tokens=False)) is the per-sample "
-    "measure. The reference arm has no recorded generation count. "
-    "The cross-check figure of 0/10, 6/10, 5/10 for the template metric equals "
-    "reviews whose first line declares summary_of_the_paper, reported here as "
-    "summary_of_the_paper_count; the stricter four-key metric is "
-    "has_all_four_count."
+    "measure. The reference arm has no recorded generation count. Template "
+    "keys are the four sections Re²'s own reviews use; "
+    "summary_of_the_paper_count is a subset of has_all_four_count, so 0/10, "
+    "6/10, 5/10 for the first line and 0/10, 6/10, 3/10 for all four are "
+    "different questions, not a contradiction."
 )
 
 

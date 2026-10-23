@@ -98,7 +98,7 @@ held-out papers. **This is a pilot, not a benchmark** — no human evaluation, n
 | ROUGE-L vs reference (mean) | 0.123 | 0.175 | — |
 | ROUGE-L range | 0.085–0.140 | 0.120–0.221 | — |
 | Opens with `summary_of_the_paper:` | 0/10 | 6/10 | 5/10 |
-| Any section header at line start | 1/10 | 9/10 | 5/10 |
+| Full Re² four-section template | 0/10 | 6/10 | 3/10 |
 | Section/Table/Figure refs (grounded) | 24 (20) | 3 (1) | 20 (16) |
 | Mean 5-gram repetition | 0.2% | 6.5% (max 30%) | 0.6% |
 
