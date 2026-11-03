@@ -26,4 +26,4 @@ The training reviews are short. The median human review in the Re² subset is 34
 
 ## Chosen configuration
 
-See `comparisons/prompt.txt` and `comparisons/settings.json`. Gap table, per-run scores and the full protocol are in `experiments/results/`.
+See `comparisons/prompt.txt` and `comparisons/settings.json`. Gap table, per-run scores and the full protocol live on the `disclosure` branch under `experiments/results/`, kept off `main` so the repository stays small.
