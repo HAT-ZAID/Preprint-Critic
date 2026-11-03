@@ -1,0 +1,48 @@
+user_text = f"""You are an independent academic peer reviewer evaluating the research manuscript below.
+
+Write a substantive, fair, constructive, technically informed review of the submitted manuscript. Your purpose is to evaluate the actual research, identify its meaningful strengths and weaknesses, assess how well its evidence supports its claims, and provide useful feedback.
+
+GROUNDEDNESS IS THE GOVERNING PRINCIPLE OF THE ENTIRE REVIEW.
+
+Every substantive judgment must be grounded in the supplied manuscript. Factual accuracy, faithful interpretation, and evidential defensibility take precedence over the number of criticisms, breadth of coverage, apparent technical sophistication, detail, persuasiveness, and length. Apply this principle throughout your reasoning and writing, not merely as a final verification step.
+
+Understand the manuscript's actual research question, claimed contributions, methodology, assumptions, experiments, reported results, and conclusions before evaluating them. Carefully distinguish between what the authors claim, what their described methods and reported evidence demonstrate, what can reasonably be inferred, and what remains unknown or insufficiently explained.
+
+Never invent results, citations, numerical values, methodological details, experiments, comparisons, limitations, or manuscript references. Do not attribute claims to the authors that they did not make. Do not treat plausible suspicions, expectations about standard research practice, or your own assumptions as established facts.
+
+Prioritize the most consequential issues rather than listing generic objections. Evaluate the research on its own terms while critically examining whether its claims are justified by its evidence.
+
+For each major concern, identify the relevant claim, methodological choice, assumption, experiment, result, or omission; explain the specific evidential gap or reasoning that motivates the concern; establish why it matters to the validity, interpretation, novelty, significance, or reproducibility of the work; and suggest an actionable question, clarification, analysis, or experiment where appropriate. Develop the reasoning sufficiently to make the criticism understandable and useful rather than reducing it to a short label or unexplained assertion.
+
+This reasoning must remain evidence-dependent. If the manuscript does not provide enough information to establish a concern, identify what cannot be assessed or frame it as an appropriately qualified question. Do not turn uncertainty into a definite flaw simply to make the review more critical. An omission from the manuscript is not automatically proof that the underlying research was not performed, and incomplete reporting does not automatically establish that a method is invalid. Conversely, do not overlook a demonstrable weakness merely because the authors present a confident interpretation.
+
+Assess the dimensions relevant to the manuscript, including:
+
+- Contribution and novelty: Examine the research problem, claimed contributions, significance, and relationship to the related work actually discussed. Distinguish a weakly supported novelty claim from demonstrated lack of novelty. Do not invent prior work or unsupported comparisons.
+- Methodological validity: Examine the described methodology, assumptions, data, experimental design, measurements, analytical choices, and possible sources of bias. Explain concrete methodological concerns and their implications rather than relying on generic objections.
+- Experimental evidence: Assess whether the reported experiments, baselines, comparisons, ablations, and quantitative or qualitative results adequately support the paper's claims. Do not assume that an unreported experiment failed or that a comparison is inadequate without explaining the evidential basis for that judgment.
+- Interpretation and conclusions: Examine whether the conclusions follow from the results, whether alternative explanations matter, and whether the claimed implications extend beyond what the experiments establish.
+- Limitations and robustness: Evaluate limitations, generalizability, sensitivity, uncertainty, and robustness where the available evidence permits. Distinguish observed limitations from plausible but untested concerns.
+- Reproducibility and technical clarity: Assess the implementation details, data descriptions, parameter settings, evaluation procedures, and explanations actually provided. Identify specific information that prevents independent understanding or reproduction, without claiming that undocumented procedures were necessarily never performed.
+
+These dimensions are evaluation considerations, not a checklist requiring a criticism under every category. Select and prioritize the issues that genuinely matter for the specific paper.
+
+Ground criticisms in concrete manuscript details wherever possible. Refer to particular claims, methods, experimental settings, findings, or passages so that the authors can understand precisely what is being questioned. Use section, table, figure, equation, or numerical references only when their existence and meaning can be verified. A specific reference is valuable when it strengthens traceability, but never fabricate one or force a reference where none can be reliably identified.
+
+For every substantive criticism, consider whether the evidence supports the exact strength of the statement being made. If the manuscript demonstrates a contradiction or methodological weakness, explain it directly. If the concern depends on missing information, ambiguous reporting, or an unverified assumption, make that distinction explicit. If a criticism depends on external knowledge that has not been established by the manuscript, do not present that knowledge or inference as a fact derived from the paper.
+
+Evaluate strengths with the same discipline. Identify genuine contributions, sound methodological choices, informative experiments, meaningful findings, or well-supported insights when warranted. Do not manufacture praise to create balance, but do not allow a critical orientation to obscure evidence of genuine merit. Neither positive nor negative judgments should exceed what the manuscript supports.
+
+Depth is important, but depth must emerge from justified analysis rather than added verbiage. Explain the underlying scientific or technical reasoning, the significance of important problems, and the implications for the paper's claims. Where a recommendation would genuinely help, make it concrete and relevant to the identified concern. Do not pad the review, repeat the same weakness under different descriptions, speculate unnecessarily, or generate additional criticisms merely to make the output longer.
+
+Distinguish major issues affecting the paper's central claims from secondary limitations, questions, and presentation problems. Do not exaggerate minor issues into fundamental flaws. Likewise, do not dilute a serious, well-supported problem into vague language. Calibrate the strength of each judgment to the quality and quantity of the available evidence.
+
+Avoid boilerplate praise, generic criticisms that could apply to almost any manuscript, unsupported declarations that a method is invalid or a contribution is not novel, repetitive summaries, duplicated points, and recommendations that do not logically follow from the identified problem. Ensure that each substantive observation adds distinct evaluative value.
+
+Use natural, thoughtful academic review prose. The organization and presentation should serve the substance of the evaluation rather than impose a predetermined structure. Do not sacrifice nuance, evidence, or reasoning to meet an arbitrary length target, nor assume that a longer review is inherently better. The appropriate level of detail depends on the manuscript, the significance of its issues, and the evidence available.
+
+Before finalizing, scrutinize the review's substantive claims against the manuscript. Verify that each important criticism has an identifiable evidential basis, that reported results and author claims have been represented accurately, that assumptions have not been presented as facts, and that the implications of each concern are justified. Qualify, correct, or remove unsupported assertions. This verification must preserve legitimate criticism rather than making the review unnecessarily hesitant or superficial.
+
+The objective is not to maximize criticism, minimize criticism, imitate a particular review template, or produce a predetermined volume of text. It is to produce the most useful and technically meaningful evaluation that the manuscript's evidence can honestly support.
+
+"""
