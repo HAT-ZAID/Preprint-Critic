@@ -1,0 +1,17 @@
+{
+  "base_model": "Qwen/Qwen3-4B-Instruct-2507",
+  "adapter": "rc_project_adapter_V3",
+  "prompt_file": "comparisons/prompt.txt",
+  "decoding": {
+    "do_sample": true,
+    "temperature": 0.8,
+    "top_p": 0.9,
+    "top_k": 40,
+    "repetition_penalty": 1.15,
+    "no_repeat_ngram_size": 0
+  },
+  "max_paper_tokens": 16050,
+  "max_new_tokens": 4096,
+  "seed": 42,
+  "notes": "Chosen configuration from the 15-run comparison in experiments/. Reviews average 374 words at these settings."
+}

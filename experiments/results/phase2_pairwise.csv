@@ -1,0 +1,9 @@
+config_a,config_b,a_wins,b_wins,ties,n
+gpt_prompt_high_temp [adapter],gpt_prompt_high_temp [base],4,6,0,10
+gpt_prompt_high_temp [adapter],original_prompt_high_temp [adapter],7,3,0,10
+gpt_prompt_high_temp [adapter],original_prompt_original_settings [adapter],4,6,0,10
+gpt_prompt_high_temp [adapter],very_big_prompt_high_temp [adapter],6,4,0,10
+original_prompt_high_temp [adapter],original_prompt_high_temp [base],0,20,0,20
+original_prompt_high_temp [adapter],original_prompt_original_settings [adapter],12,8,0,20
+original_prompt_high_temp [adapter],very_big_prompt_high_temp [adapter],12,8,0,20
+original_prompt_original_settings [adapter],very_big_prompt_high_temp [adapter],9,11,0,20
