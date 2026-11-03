@@ -88,4 +88,4 @@ Notebook: `Notebooks/Preprint_Critic_V3.ipynb`, which is the training run and is
 
 ## Credits
 
-Dataset: Re² (`Daoze/ReviewRebuttal`), Apache-2.0. Base model: Qwen3-4B-Instruct-2507. Trained and evaluated on Kaggle and locally.
+Dataset: Re² (`Daoze/ReviewRebuttal`), Apache-2.0. Base model: Qwen3-4B-Instruct-2507. Trained and evaluated on Collab, Evaluated on Kaggle and locally.
